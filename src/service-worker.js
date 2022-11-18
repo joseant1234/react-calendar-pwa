@@ -68,3 +68,15 @@ self.addEventListener('message', (event) => {
     self.skipWaiting();
   }
 });
+
+// hace referencia al serviceworker
+// el skipwating detiene el serviceworker anterior y entra el nuevo
+self.addEventListener('install', async(event) => {
+  const cache = await caches.open('cache-1');
+  // en addAll se almacena los path q se quieren guardar
+  await cache.addAll([
+    'https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css',
+    'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.0-2/css/all.min.css',
+    '/favicon.ico'
+  ])
+});
