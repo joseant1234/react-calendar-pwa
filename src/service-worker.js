@@ -80,3 +80,36 @@ self.addEventListener('install', async(event) => {
     '/favicon.ico'
   ])
 });
+
+const apiOfflineFallbacks = [
+  'http://localhost:3001/api/auth/renew',
+  'http://localhost:3001/api/events'
+]
+
+// fetch se ejecuta al hacer cualquier request
+self.addEventListener('fetch', (event) => {
+  // if (event.request.url != 'http://localhost:3001/api/auth/renew') return;
+  if (!apiOfflineFallbacks.includes(event.request.url)) { return; }
+
+  const resp = fetch(event.request)
+    .then(response => {
+      if (!response) {
+        return caches.match(event.request)
+      }
+      // Guardar en cache la respuesta
+      caches.open('cache-dynamic').then(cache => {
+        // con el put si ya existe solo lo actualiza
+        // como llave se guarda el request, porque cuando alguien solicite el request se responderá lo que contiene lo que esdtá en response
+        cache.put(event.request, response)
+      })
+      // se clona porque en este punto ya se manipuló el response
+      return response.clone();
+    })
+    .catch(err => {
+      console.log('offline response')
+      // busca en todos los caches el event.request
+      return caches.match(event.request)
+    })
+    // se le envia la promesa
+    event.respondWith(resp);
+});
