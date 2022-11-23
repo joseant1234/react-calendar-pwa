@@ -6,7 +6,17 @@ importScripts('https://storage.googleapis.com/workbox-cdn/releases/6.2.0/workbox
 workbox.precaching.precacheAndRoute(self.__WB_MANIFEST);
 
 const { registerRoute } = workbox.routing;
-const { CacheFirst } = workbox.strategies
+const { CacheFirst, NetworkFirst } = workbox.strategies
+
+registerRoute(
+    new RegExp('http://localhost:3001/api/auth/renew'),
+    new NetworkFirst()
+)
+
+registerRoute(
+    new RegExp('http://localhost:3001/api/event'),
+    new NetworkFirst()
+)
 
 // cuando venga una ruta que cumpla la condición que se pone en regexp, se aplica una estrategia
 // si está en CacheFirst primero lo lee del cache sino de internet
