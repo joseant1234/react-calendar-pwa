@@ -48,3 +48,19 @@ registerRoute(
     }),
     'POST'
 )
+
+registerRoute(
+    new RegExp('http://localhost:3001/api/events/'),
+    new NetworkOnly({
+        plugins: [bgSyncPlugin]
+    }),
+    'DELETE'
+)
+
+registerRoute(
+    new RegExp('http://localhost:3001/api/events/'),
+    new NetworkOnly({
+        plugins: [bgSyncPlugin]
+    }),
+    'PUT'
+)
