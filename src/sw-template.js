@@ -11,29 +11,53 @@ const { registerRoute } = workbox.routing;
 const { CacheFirst, NetworkFirst, NetworkOnly } = workbox.strategies
 const { BackgroundSyncPlugin } = workbox.backgroundSync;
 
+const cacheNetworkFirst = [
+    '/api/auth/renew',
+    '/api/events',
+];
+// si el callback retorna true ejecuta la estrategia
 registerRoute(
-    new RegExp('http://localhost:3001/api/auth/renew'),
+    ({ request, url }) => {
+        return cacheNetworkFirst.includes(url.pathname)
+    },
     new NetworkFirst()
 )
 
+// registerRoute(
+//     new RegExp('http://localhost:3001/api/auth/renew'),
+//     new NetworkFirst()
+// )
+
+// registerRoute(
+//     new RegExp('http://localhost:3001/api/events'),
+//     new NetworkFirst()
+// )
+
+const cacheFirstNetwork = [
+    'https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css',
+    'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.0-2/css/all.min.css'
+]
+
 registerRoute(
-    new RegExp('http://localhost:3001/api/events'),
-    new NetworkFirst()
+    ({ request, url }) => {
+        return cacheFirstNetwork.includes(url.href)
+    },
+    new CacheFirst()
 )
 
 // cuando venga una ruta que cumpla la condición que se pone en regexp, se aplica una estrategia
 // si está en CacheFirst primero lo lee del cache sino de internet
 // no se hace el precache de las rutas en registerRoute, esa solo se ponen en cache cuando se solicitan
 // lo va a poner en cache storage /workbox-runtime...
-registerRoute(
-    new RegExp('https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css'),
-    new CacheFirst()
-)
+// registerRoute(
+//     new RegExp('https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css'),
+//     new CacheFirst()
+// )
 
-registerRoute(
-    new RegExp('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.0-2/css/all.min.css'),
-    new CacheFirst()
-)
+// registerRoute(
+//     new RegExp('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.0-2/css/all.min.css'),
+//     new CacheFirst()
+// )
 
 // posteos offline
 // todo lo q no sea metodo GET solo funciona con network only, ya ue varia con la infomacion que lleva, por ejemplo un post lleva un body distinto al de otro request a pesar q es el mismo endpoint
